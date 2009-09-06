@@ -41,7 +41,7 @@ get '/users' do
   xml.node(:name=>"http://www.steirischerherbst.at",
            :description=>"http://www.steirischerherbst.at") do |node|
     @users.each do |user|
-      xml.node(:name => "#{user.lastname} #{user.firstname}" :email=>"#{user.email}")
+      xml.node(:name => "#{user.lastname} #{user.firstname}", :email=>"#{user.email}")
     end unless @users.nil?
   end
 
