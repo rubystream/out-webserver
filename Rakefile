@@ -15,7 +15,7 @@ namespace :db do
   end
 
   task :environment do
-    APP_ENV = (ENV['APP_ENV'] ||= 'development')
+    APP_ENV = (ENV['RACK_ENV'] ||= 'development')
     dbconfig = YAML.load(File.open('config/database.yml'))[APP_ENV]
     ActiveRecord::Base.establish_connection(dbconfig)
     ActiveRecord::Base.colorize_logging = false
