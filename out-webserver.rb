@@ -10,20 +10,20 @@ Dir.glob(File.join(File.dirname(__FILE__), './db/models/*.rb')).each {|f| requir
 enable :sessions
 enable :logging
 
-logFile = File.open('log/database.log','a+')
-@logger = Logger.new(logFile)
-@logger.level = Logger::INFO
+# logFile = File.open('log/database.log','a+')
+# @logger = Logger.new(logFile)
+# @logger.level = Logger::INFO
 
 @environment =  ENV['RACK_ENV'] || development? ? 'development' : production? ? 'production' : 'test'
 
-@logger.info "Application Started: #{Time.now} in #{@environment} environment."
+# @logger.info "Application Started: #{Time.now} in #{@environment} environment."
 
 configure do
   dbconfig = YAML.load(File.open('config/database.yml'))[@environment]
 
-  ActiveRecord::Base.logger = @logger
-  ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'] || dbconfig)
-  ActiveRecord::Base.colorize_logging = false
+  # ActiveRecord::Base.logger = @logger
+  ActiveRecord::Base.establish_connection(dbconfig)
+  # ActiveRecord::Base.colorize_logging = false
 end
 
 
