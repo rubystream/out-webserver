@@ -22,7 +22,7 @@ configure do
   dbconfig = YAML.load(File.open('config/database.yml'))[@environment]
 
   ActiveRecord::Base.logger = @logger
-  ActiveRecord::Base.establish_connection(dbconfig)
+  ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'] || dbconfig)
   ActiveRecord::Base.colorize_logging = false
 end
 
