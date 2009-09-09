@@ -2,4 +2,3 @@
 *.swp
 *.log
 *.sqlite3
-database.yml
