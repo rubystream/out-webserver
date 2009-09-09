@@ -61,9 +61,9 @@ get '/users/:id' do
 
   begin
     @user = User.find(params[:id])
-    xml.node(:id => "#{user.id}",
-             :name => "#{user.lastname} #{user.firstname}", 
-             :email => "#{user.email}")
+    xml.node(:id => "#{@user.id}",
+             :name => "#{@user.lastname} #{@user.firstname}", 
+             :email => "#{@user.email}")
   rescue ActiveRecord::RecordNotFound => err
     xml.result(:code=>"404", :description=> "Record Not found")
     throw :halt, [404, xml.target!]
@@ -80,9 +80,9 @@ post '/users/?' do
   @user = User.new(params[:user])
   if @user.save
     xml.result(:code=>"200", :description =>"OK") do |result|
-      result.node(:id => "#{user.id}", 
-                  :name => "#{user.lastname} #{user.firstname}", 
-                  :email=>"#{user.email}")
+      result.node(:id => "#{@user.id}", 
+                  :name => "#{@user.lastname} #{@user.firstname}", 
+                  :email=>"#{@user.email}")
     end
   else
     xml.result(:code => "400", :description => "Bad Request") do |result|
@@ -107,9 +107,9 @@ put '/users/:id' do
 
     if (@user.update_attributes(params[:user]))
         xml.result(:code=>"200", :description =>"OK") do |result|
-          result.node(:id => "#{user.id}",
-                      :name => "#{user.lastname} #{user.firstname}",
-                      :email => "#{user.email}")
+          result.node(:id => "#{@user.id}",
+                      :name => "#{@user.lastname} #{@user.firstname}",
+                      :email => "#{@user.email}")
         end
     else
       xml.result(:code => "400", :description => "Bad Request") do |result|
@@ -156,6 +156,6 @@ get '/users/:id/edit/?' do
     @user = User.find(params[:id])
     erb :edit
   rescue ActiveRecord::RecordNotFound
-    throw :halt [404, "RecordNotFound"]
+    throw :halt, [404, "RecordNotFound"]
   end
 end

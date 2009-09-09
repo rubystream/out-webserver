@@ -1,1 +1,17 @@
-<h1>Edit User</h1>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+    <title>OUT.rs User Namagement</title>
+  </head>
+  <body>
+  <div id="content">
+    <form action=<%= "/users/#{@user.id}/edit" %> method="post" accept-charset="utf-8">
+      <p><input id="firstname" name="user[firstname]" type="text" value=<%= "#{@user.firstname}" %> /></p>
+      <p><input id="lastname" name="user[lastname]" type="text" value=<%= "#{@user.lastname}" %> /></p>
+      <p><input id="email" name="user[email]" type="text" value=<%= "#{@user.email}" %> /></p>
+      <p><input type="submit" value="Continue &rarr;"/></p>
+    </form>
+  </div>
+  </body>
+</html>
