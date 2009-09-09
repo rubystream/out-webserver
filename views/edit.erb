@@ -7,10 +7,38 @@
   <body>
   <div id="content">
     <form action=<%= "/users/#{@user.id}/edit" %> method="post" accept-charset="utf-8">
-      <p><input id="firstname" name="user[firstname]" type="text" value=<%= "#{@user.firstname}" %> /></p>
-      <p><input id="lastname" name="user[lastname]" type="text" value=<%= "#{@user.lastname}" %> /></p>
-      <p><input id="email" name="user[email]" type="text" value=<%= "#{@user.email}" %> /></p>
-      <p><input type="submit" value="Continue &rarr;"/></p>
+      <table>
+        <tr>
+          <td aliign="right">
+            <label for="firstname">First Name</label>
+          </td>
+          <td>
+            <input id="firstname" name="user[firstname]" type="text" value=<%= "#{@user.firstname}" %> />
+          </td>
+        </tr>
+        <tr>
+          <td aliign="right">
+            <label for="lastname">Last Name</label>
+          </td>
+          <td>
+            <input id="lastname" name="user[lastname]" type="text" value=<%= "#{@user.lastname}" %> />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="email">e-mail</label>
+          </td>
+          <td>
+            <input id="email" name="user[email]" type="text" value=<%= "#{@user.email}" %> />
+          </td>
+        </tr>
+        <tr>
+          <td align="left"></td>
+          <td align="right">
+            <input type="submit" value="Continue &rarr;"/>
+          </td>
+        </tr>
+      </table>
     </form>
   </div>
   </body>

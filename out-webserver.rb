@@ -52,6 +52,12 @@ get '/users/?' do
   end
 end
 
+# New user
+get '/users/new/?' do
+  @user = User.new
+  erb :new
+end
+
 # Show user
 get '/users/:id' do
   content_type 'application/xml', :charset => 'utf-8'
@@ -142,12 +148,6 @@ delete '/users/:id' do
     xml.result(:code=>"404", :description=> "Record Not found")
     throw :halt, [404, xml.target!]
   end
-end
-
-# New user
-get '/users/new/?' do
-  @user = User.new
-  erb :new
 end
 
 # Edit user
