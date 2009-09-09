@@ -152,6 +152,10 @@ end
 
 # Edit user
 get '/users/:id/edit/?' do
- # @user = User.find(params[:id])
-  erb :edit
+  begin
+    @user = User.find(params[:id])
+    erb :edit
+  rescue ActiveRecord::RecordNotFound
+    throw :halt [404, "RecordNotFound"]
+  end
 end
