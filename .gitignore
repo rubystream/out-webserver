@@ -3,3 +3,5 @@
 *.log
 *.sqlite3
 database.yml
+public/pictures/*
+public/uploads/*

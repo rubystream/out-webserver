@@ -3,7 +3,7 @@ class AddPictureColumnsToUser < ActiveRecord::Migration
     add_column :users, :picture_file_name, :string
     add_column :users, :picture_content_type, :string
     add_column :users, :picture_content_size, :integer
-    add_column :users, :picture_updated_at, :datetime
+    add_column :users, :picture_updated_at, :timestamp
   end
 
   def self.down

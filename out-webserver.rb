@@ -3,27 +3,28 @@ require 'sinatra'
 require 'active_record'
 require 'builder'
 require 'yaml'
-
-# Load models
-Dir.glob(File.join(File.dirname(__FILE__), './db/models/*.rb')).each {|f| require f }
+require 'paperclip'
 
 enable :sessions
 enable :logging
 
-# logFile = File.open('log/database.log','a+')
-# @logger = Logger.new(logFile)
-# @logger.level = Logger::INFO
+RAILS_ROOT = '.'
 
-@environment =  ENV['RACK_ENV'] || development? ? 'development' : production? ? 'production' : 'test'
+# Load models
+Dir.glob(File.join(File.dirname(__FILE__), './db/models/*.rb')).each {|f| require f }
 
-# @logger.info "Application Started: #{Time.now} in #{@environment} environment."
+@logger = Logger.new('./log/database.log')
+
+@environment =  'development' # ENV['RACK_ENV'] || development? ? 'development' : production? ? 'production' : 'test'
+
+ @logger.info "Application Started: #{Time.now} in #{@environment} environment."
 
 configure do
-  dbconfig = YAML.load(File.open('config/database.yml'))[@environment]
+  dbconfig = YAML.load(File.open('./config/database.yml'))[@environment]
 
-  # ActiveRecord::Base.logger = @logger
+  ActiveRecord::Base.logger = @logger
   ActiveRecord::Base.establish_connection(dbconfig)
-  # ActiveRecord::Base.colorize_logging = false
+  ActiveRecord::Base.colorize_logging = false
 end
 
 
@@ -46,7 +47,8 @@ get '/users/?' do
       @users.each do |user|
         xml.node(:id => "#{user.id}",
                  :name => "#{user.lastname} #{user.firstname}", 
-                 :email=>"#{user.email}")
+                 :email=>"#{user.email}",
+                 :picture => "#{user.picture.url}")
       end unless @users.nil?
     end
   end
@@ -69,7 +71,9 @@ get '/users/:id' do
     @user = User.find(params[:id])
     xml.node(:id => "#{@user.id}",
              :name => "#{@user.lastname} #{@user.firstname}", 
-             :email => "#{@user.email}")
+             :email => "#{@user.email}",
+             :picture => "#{@user.picture.url}")
+
   rescue ActiveRecord::RecordNotFound => err
     xml.result(:code=>"404", :description=> "Record Not found")
     throw :halt, [404, xml.target!]
@@ -88,7 +92,8 @@ post '/users/?' do
     xml.result(:code=>"200", :description =>"OK") do |result|
       result.node(:id => "#{@user.id}", 
                   :name => "#{@user.lastname} #{@user.firstname}", 
-                  :email=>"#{@user.email}")
+                  :email=>"#{@user.email}",
+                  :picture => "#{@user.picture.url}" )
     end
   else
     xml.result(:code => "400", :description => "Bad Request") do |result|
@@ -109,14 +114,35 @@ put '/users/:id' do
   xml.instruct!
 
   begin
-    @user.find(params[:id])
+    @user = User.find(params[:id])
 
     if (@user.update_attributes(params[:user]))
-        xml.result(:code=>"200", :description =>"OK") do |result|
-          result.node(:id => "#{@user.id}",
-                      :name => "#{@user.lastname} #{@user.firstname}",
-                      :email => "#{@user.email}")
+      if params[:user][:picture].include?(:tempfile)
+        file_name = File.join(options.public,"uploads", params[:user][:'picture'][:filename])
+        # File.open(file_name, "wb") { |f| f.write(params[:user]['picture'][:tempfile].read) }
+        FileUtils.cp params[:user][:picture][:tempfile].path, file_name
+        file = File.new file_name, "rb"
+        @user.picture = file
+        if @user.save
+          xml.result(:code=>"200", :description =>"OK") do |result|
+            result.node(:id => "#{@user.id}",
+                        :name => "#{@user.lastname} #{@user.firstname}",
+                        :email => "#{@user.email}",
+                        :picture => "#{@user.picture.url}" )
+          end
+        else
+          xml.result(:code => "400", :description => "Bad Request") do |result|
+            result.errors do |item|
+              @user.errors.each do |field, msg|
+                item.error(:field => "#{field}", :message => "#{msg}")
+              end
+            end
+          end
         end
+        file.close
+        FileUtils.rm file_name
+        xml.target!
+      end
     else
       xml.result(:code => "400", :description => "Bad Request") do |result|
         result.errors do |item|
