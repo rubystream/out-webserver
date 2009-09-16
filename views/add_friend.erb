@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+    <title>OUT.rs User Management</title>
+  </head>
+  <body>
+    <div id="content">
+      <p>User: <%= "#{@user.firstname} #{@user.lastname}" %>
+      </p>
+      <table>
+        <% for friend in @users %>
+          <tr>
+            <form action=<%= "/friends" %> method="post" accept-charset="utf-8">
+              <input type="hidden" name="friend_id" value=<%= friend.id %> />
+              <input type="hidden" name="id" value=<%= @user.id %> />
+              <td><%= "#{friend.firstname} #{friend.lastname}" %></td>
+              <td><input type="submit" value="Add" /></td>
+            </form>
+          </tr>
+        <% end %>
+      </table>
+  </div>
+  </body>
+</html>

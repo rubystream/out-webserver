@@ -1,5 +1,7 @@
 require 'paperclip'
 class User < ActiveRecord::Base
+  has_many :friendships
+  has_many :firends, :through => :friendships
 
   has_attached_file :picture,
     :styles => { :thumb => "120x120", :medium => "550x550" }
@@ -11,6 +13,6 @@ class User < ActiveRecord::Base
     :less_than => 5.megabytes, 
     :message => "File has to be less then 5Mb"
   validates_attachment_content_type :picture, 
-    :content_type => ['image/jpg', 'image/png', 'image/jpeg'],
+    :content_type => ["image/jpg", "image/png", "image/jpeg"],
     :message => "Not a valid file type"
 end

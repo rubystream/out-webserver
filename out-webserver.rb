@@ -185,3 +185,40 @@ get '/users/:id/edit/?' do
     throw :halt, [404, "RecordNotFound"]
   end
 end
+
+# Add friend
+get '/friends/:id' do
+  begin
+    @user = User.find(params[:id])
+    @users = User.find(:all, :conditions => ['id != ?', params[:id]])
+    erb :add_friend
+  rescue ActiveRecord::RecordNotFound
+    throw :halt, [404, "RecordNotFound"]
+  end
+end
+
+post '/friends/?' do
+  content_type 'application/xml', :charset => 'utf-8'
+
+  xml = Builder::XmlMarkup.new :indent => 2
+  xml.instruct!
+
+  begin
+    @user = User.find(params[:id])
+    @friendship = @user.friendships.build(:friend_id => params[:friend_id])
+
+    if @friendship.save
+      xml.result(:code=>"200", :description =>"OK") do |result|
+        result.friendship(:user => @friendship.user_id, :friend => @friendship.friend_id)
+      end
+    else
+      xml.result(:code => "400", :description => "Bad Request") do |result|
+        result.errors do |item|
+          @friendship.errors.each do |field, msg|
+            item.error(:field => "#{field}", :message => "#{msg}")
+          end
+        end
+      end
+    end
+  end
+end
